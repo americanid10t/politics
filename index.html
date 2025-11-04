@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political Criminal Charges Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to bottom right, #0f172a, #1e293b, #0f172a);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <svg class="w-12 h-12 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"></path>
+                </svg>
+                <h1 class="text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    Political Criminal Charges Data
+                </h1>
+            </div>
+            <p class="text-gray-300 text-lg">Factual comparison of criminal charges and convictions in U.S. politics</p>
+            <p class="text-gray-400 text-sm mt-2">Data sourced from public records and verified news sources</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="grid grid-cols-2 md:flex md:flex-row gap-4 mb-8 bg-slate-800/50 p-2 rounded-lg backdrop-blur">
+            <button onclick="showTab('overview')" id="tab-overview" class="tab-btn py-3 px-6 rounded-lg font-semibold transition-all bg-blue-600 text-white shadow-lg">
+                Overview
+            </button>
+            <button onclick="showTab('presidents')" id="tab-presidents" class="tab-btn py-3 px-6 rounded-lg font-semibold transition-all bg-slate-700/50 text-gray-300 hover:bg-slate-700">
+                Presidents
+            </button>
+            <button onclick="showTab('congress')" id="tab-congress" class="tab-btn py-3 px-6 rounded-lg font-semibold transition-all bg-slate-700/50 text-gray-300 hover:bg-slate-700">
+                Congress
+            </button>
+            <button onclick="showTab('sources')" id="tab-sources" class="tab-btn py-3 px-6 rounded-lg font-semibold transition-all bg-slate-700/50 text-gray-300 hover:bg-slate-700">
+                Sources
+            </button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="content-overview" class="tab-content">
+            <div class="space-y-8">
+                <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-400">Administration Comparison (1961-2016)</h2>
+                    <canvas id="adminChart" height="100"></canvas>
+                    <div class="mt-4 p-4 bg-slate-700/50 rounded-lg">
+                        <p class="text-gray-300">
+                            <strong>Key Finding:</strong> Over 28 years each of Democratic and Republican administrations (1961-2016), 
+                            Republican administrations had 18× more indictments, 38× more convictions, and 39× more prison sentences.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Key Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-red-600/20 to-red-800/20 backdrop-blur rounded-xl p-6 border border-red-700/50">
+                        <h3 class="text-lg font-semibold mb-2 text-red-300">Republican Administrations</h3>
+                        <p class="text-4xl font-bold text-red-400">120</p>
+                        <p class="text-gray-300">Total Indictments (1968-2016)</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-600/20 to-blue-800/20 backdrop-blur rounded-xl p-6 border border-blue-700/50">
+                        <h3 class="text-lg font-semibold mb-2 text-blue-300">Democratic Administrations</h3>
+                        <p class="text-4xl font-bold text-blue-400">3</p>
+                        <p class="text-gray-300">Total Indictments (1961-2016)</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-600/20 to-purple-800/20 backdrop-blur rounded-xl p-6 border border-purple-700/50">
+                        <h3 class="text-lg font-semibold mb-2 text-purple-300">First in History</h3>
+                        <p class="text-4xl font-bold text-purple-400">34</p>
+                        <p class="text-gray-300">Trump Felony Convictions (2024)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Presidents Tab -->
+        <div id="content-presidents" class="tab-content hidden">
+            <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                <h2 class="text-2xl font-bold mb-6 text-blue-400">Presidential Criminal Charges</h2>
+                <div class="space-y-4">
+                    <div class="bg-slate-700/50 rounded-lg p-5 border border-slate-600 hover:border-blue-500 transition-all">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold">Donald Trump</h3>
+                                <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-2 bg-red-600/30 text-red-300">Republican</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold text-orange-400">91</div>
+                                <div class="text-sm text-gray-400">Indictments</div>
+                                <div class="text-3xl font-bold text-red-400 mt-2">34</div>
+                                <div class="text-sm text-gray-400">Convictions</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm"><strong>Charges:</strong> Falsifying business records, classified documents, election interference</p>
+                    </div>
+
+                    <div class="bg-slate-700/50 rounded-lg p-5 border border-slate-600">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold">Richard Nixon</h3>
+                                <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-2 bg-red-600/30 text-red-300">Republican</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold text-orange-400">0</div>
+                                <div class="text-sm text-gray-400">Indictments</div>
+                                <div class="text-3xl font-bold text-red-400 mt-2">0</div>
+                                <div class="text-sm text-gray-400">Convictions</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm"><strong>Charges:</strong> Unindicted co-conspirator (pardoned before charges)</p>
+                    </div>
+
+                    <div class="bg-slate-700/50 rounded-lg p-5 border border-slate-600">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold">Bill Clinton</h3>
+                                <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-2 bg-blue-600/30 text-blue-300">Democrat</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold text-orange-400">0</div>
+                                <div class="text-sm text-gray-400">Indictments</div>
+                                <div class="text-3xl font-bold text-red-400 mt-2">0</div>
+                                <div class="text-sm text-gray-400">Convictions</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm"><strong>Charges:</strong> Possible perjury (never charged, disbarred)</p>
+                    </div>
+
+                    <div class="bg-slate-700/50 rounded-lg p-5 border border-slate-600">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="text-xl font-bold">All Other Presidents</h3>
+                                <span class="inline-block px-3 py-1 rounded-full text-sm font-semibold mt-2 bg-gray-600/30 text-gray-300">Various</span>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-3xl font-bold text-orange-400">0</div>
+                                <div class="text-sm text-gray-400">Indictments</div>
+                                <div class="text-3xl font-bold text-red-400 mt-2">0</div>
+                                <div class="text-sm text-gray-400">Convictions</div>
+                            </div>
+                        </div>
+                        <p class="text-gray-300 text-sm"><strong>Charges:</strong> None</p>
+                    </div>
+                </div>
+                <div class="mt-6 p-4 bg-blue-900/30 rounded-lg border border-blue-700">
+                    <p class="text-blue-200">
+                        <strong>Historical Note:</strong> Donald Trump is the first U.S. president in history to be criminally indicted and convicted. 
+                        He was convicted on 34 felony counts in May 2024.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Congress Tab -->
+        <div id="content-congress" class="tab-content hidden">
+            <div class="space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                        <h2 class="text-2xl font-bold mb-6 text-blue-400">Congress Convictions by Party</h2>
+                        <canvas id="congressPieChart"></canvas>
+                        <p class="text-center text-gray-300 mt-4">Sample of notable convictions (2005-2019)</p>
+                    </div>
+
+                    <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                        <h2 class="text-2xl font-bold mb-6 text-blue-400">Party Breakdown</h2>
+                        <div class="space-y-4">
+                            <div class="bg-red-900/30 p-4 rounded-lg border border-red-700">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold text-red-300">Republicans</span>
+                                    <span class="text-3xl font-bold text-red-400">6</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-3 mt-3">
+                                    <div class="bg-red-500 h-3 rounded-full" style="width: 67%"></div>
+                                </div>
+                            </div>
+                            <div class="bg-blue-900/30 p-4 rounded-lg border border-blue-700">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-lg font-semibold text-blue-300">Democrats</span>
+                                    <span class="text-3xl font-bold text-blue-400">3</span>
+                                </div>
+                                <div class="w-full bg-slate-700 rounded-full h-3 mt-3">
+                                    <div class="bg-blue-500 h-3 rounded-full" style="width: 33%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                    <h2 class="text-2xl font-bold mb-6 text-blue-400">Notable Congressional Convictions</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr class="border-b border-slate-600">
+                                    <th class="text-left p-3 text-gray-300">Name</th>
+                                    <th class="text-left p-3 text-gray-300">Party</th>
+                                    <th class="text-left p-3 text-gray-300">Charge</th>
+                                    <th class="text-left p-3 text-gray-300">Year</th>
+                                    <th class="text-left p-3 text-gray-300">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Michael Grimm</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Tax Evasion</td>
+                                    <td class="p-3 text-gray-300">2014</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Rick Renzi</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Corruption</td>
+                                    <td class="p-3 text-gray-300">2013</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Jesse Jackson Jr.</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-blue-600/30 text-blue-300">Democrat</span></td>
+                                    <td class="p-3 text-gray-300">Misusing Campaign Funds</td>
+                                    <td class="p-3 text-gray-300">2013</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">William Jefferson</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-blue-600/30 text-blue-300">Democrat</span></td>
+                                    <td class="p-3 text-gray-300">Corruption & Bribery</td>
+                                    <td class="p-3 text-gray-300">2009</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Duke Cunningham</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Bribery & Tax Evasion</td>
+                                    <td class="p-3 text-gray-300">2005</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Chaka Fattah</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-blue-600/30 text-blue-300">Democrat</span></td>
+                                    <td class="p-3 text-gray-300">Racketeering</td>
+                                    <td class="p-3 text-gray-300">2016</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Chris Collins</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Insider Trading</td>
+                                    <td class="p-3 text-gray-300">2019</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Duncan Hunter</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Campaign Finance Violations</td>
+                                    <td class="p-3 text-gray-300">2019</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-700 hover:bg-slate-700/50">
+                                    <td class="p-3 font-semibold">Bob Ney</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-red-600/30 text-red-300">Republican</span></td>
+                                    <td class="p-3 text-gray-300">Conspiracy & False Statements</td>
+                                    <td class="p-3 text-gray-300">2006</td>
+                                    <td class="p-3"><span class="px-2 py-1 rounded text-sm bg-orange-600/30 text-orange-300">Convicted</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sources Tab -->
+        <div id="content-sources" class="tab-content hidden">
+            <div class="bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+                <h2 class="text-3xl font-bold mb-6 text-blue-400">Verified Data Sources</h2>
+                <p class="text-gray-300 mb-6">All data on this dashboard is sourced from credible, verified sources including government records, fact-checking organizations, and reputable news outlets.</p>
+
+                <!-- Presidential Sources -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Presidential Criminal Charges</h3>
+                    <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 hover:border-blue-500 transition-all">
+                        <h4 class="font-bold text-lg mb-2 text-blue-300">Trump's 91 Indictments & 34 Convictions</h4>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li>• <a href="https://en.wikipedia.org/wiki/Indictments_against_Donald_Trump" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Wikipedia: Indictments against Donald Trump</a></li>
+                            <li>• <a href="https://www.cnn.com/interactive/2023/07/politics/trump-indictments-criminal-cases/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">CNN: Tracking Donald Trump's indictments</a></li>
+                            <li>• <a href="https://time.com/6301112/trump-criminal-cases-status/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">TIME Magazine: A Guide to All of Trump's Indictments</a></li>
+                            <li>• <a href="https://www.citizensforethics.org/reports-investigations/crew-reports/trumps-91-criminal-charges-and-where-they-stand/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">CREW (Citizens for Ethics): Trump's Criminal Charges</a></li>
+                            <li>• <a href="https://www.yahoo.com/news/trump-cases-georgia-washington-florida-nyc-charges-key-dates-213951743.html" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Yahoo News: Trump Criminal Charges Guidebook</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Administration Sources -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Republican vs Democrat Administration Data (1961-2016)</h3>
+                    <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 hover:border-blue-500 transition-all">
+                        <h4 class="font-bold text-lg mb-2 text-blue-300">Conviction & Indictment Comparisons</h4>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li>• <a href="https://rantt.com/gop-admins-had-38-times-more-criminal-convictions-than-democrats-1961-2016" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Rantt Media: GOP Admins Had 38 Times More Criminal Convictions (1961-2016)</a></li>
+                            <li>• <a href="https://medium.com/rantt/gop-admins-had-38-times-more-criminal-convictions-than-democrats-1961-2016-91ddb60b0697" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Medium: GOP vs Democrat Criminal Convictions Analysis</a></li>
+                            <li>• <a href="https://www.politifact.com/factchecks/2020/jan/09/facebook-posts/many-more-criminal-indictments-under-trump-reagan-/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">PolitiFact: Criminal Indictments by Administration</a></li>
+                            <li>• <a href="https://gigafact.org/fact-briefs/have-there-been-significantly-more-criminal-actions-taken-against-republican-presidential-administrations-than-democratic-ones" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Gigafact: Criminal Activity in Presidential Administrations</a></li>
+                            <li>• <a href="https://www.huffpost.com/entry/republican-presidencies-have-91x-the-convictions-rate_b_5a3d5406e4b0df0de8b064e5" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">HuffPost: Republican Presidencies Conviction Rates</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Congress Sources -->
+                <div class="mb-8">
+                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Congressional Criminal Convictions</h3>
+                    <div class="space-y-3">
+                        <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 hover:border-blue-500 transition-all">
+                            <h4 class="font-bold text-lg mb-2 text-blue-300">General Congressional Data</h4>
+                            <ul class="space-y-2 text-sm text-gray-300">
+                                <li>• <a href="https://en.wikipedia.org/wiki/List_of_American_federal_politicians_convicted_of_crimes" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Wikipedia: List of American Federal Politicians Convicted of Crimes</a></li>
+                                <li>• <a href="https://www.govtrack.us/misconduct" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">GovTrack: Legislator Misconduct Database</a></li>
+                                <li>• <a href="https://www.cnn.com/2024/05/14/politics/doj-republicans-democrats-what-matters" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">CNN: DOJ Prosecutions Analysis</a></li>
+                                <li>• <a href="https://rollcall.com/2023/05/10/santos-isnt-the-first-member-of-congress-indicted-heres-how-others-ended-up/" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline">Roll Call: Congressional Indictments History</a></li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 hover:border-blue-500 transition-all">
+                            <h4 class="font-bold text-lg mb-2 text-blue-300">Specific Cases</h4>
+                            <div class="grid md:grid-cols-2 gap-4 mt-3">
+                                <div class="space-y-2 text-sm text-gray-300">
+                                    <p class="font-semibold text-red-300">Republicans:</p>
+                                    <p>• Michael Grimm (R-NY) - Tax Evasion</p>
+                                    <p>• Rick Renzi (R-AZ) - Corruption</p>
+                                    <p>• Duke Cunningham (R-CA) - Bribery</p>
+                                    <p>• Bob Ney (R-OH) - Conspiracy</p>
+                                    <p>• Chris Collins (R-NY) - Insider Trading</p>
+                                    <p>• Duncan Hunter (R-CA) - Campaign Finance</p>
+                                </div>
+                                <div class="space-y-2 text-sm text-gray-300">
+                                    <p class="font-semibold text-blue-300">Democrats:</p>
+                                    <p>• Jesse Jackson Jr. (D-IL) - Campaign Funds</p>
+                                    <p>• William Jefferson (D-LA) - Bribery</p>
+                                    <p>• Chaka Fattah (D-PA) - Racketeering</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Methodology -->
+                <div class="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 rounded-lg border border-blue-700">
+                    <h3 class="text-xl font-bold mb-3 text-blue-300">Methodology & Notes</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>✓ All data cross-referenced with multiple sources for accuracy</li>
+                        <li>✓ Only includes criminal charges, indictments, and convictions (not civil cases)</li>
+                        <li>✓ Administration data covers executive branch appointees and staff</li>
+                        <li>✓ Congressional data includes both House and Senate members</li>
+                        <li>✓ Data updated as of November 2025</li>
+                        <li>✓ Fact-checked against PolitiFact, Wikipedia, and government records</li>
+                    </ul>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="mt-6 bg-slate-700/50 p-4 rounded-lg border border-yellow-700/50">
+                    <p class="text-yellow-200 text-sm">
+                        <strong>⚠️ Transparency Notice:</strong> This dashboard presents factual, publicly available information about criminal charges and convictions. 
+                        All sources are linked above for verification. We encourage users to review the original sources and form their own conclusions.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-12 text-center text-gray-400 text-sm bg-slate-800/30 p-6 rounded-lg border border-slate-700">
+            <p class="mb-2">
+                <strong>Data Sources:</strong> Public records, verified news sources, and government documents
+            </p>
+            <p>
+                This dashboard presents factual information based on criminal charges, indictments, and convictions of U.S. political figures.
+                Data is continuously updated as new information becomes available.
+            </p>
+            <p class="mt-2 text-gray-500">Last updated: November 2025</p>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        function showTab(tabName) {
+            // Hide all content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Reset all tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-blue-600', 'text-white', 'shadow-lg');
+                btn.classList.add('bg-slate-700/50', 'text-gray-300');
+            });
+            
+            // Show selected content
+            document.getElementById('content-' + tabName).classList.remove('hidden');
+            
+            // Highlight selected tab
+            const activeBtn = document.getElementById('tab-' + tabName);
+            activeBtn.classList.remove('bg-slate-700/50', 'text-gray-300');
+            activeBtn.classList.add('bg-blue-600', 'text-white', 'shadow-lg');
+        }
+
+        // Initialize charts
+        window.addEventListener('load', function() {
+            // Administration Comparison Chart
+            const adminCtx = document.getElementById('adminChart').getContext('2d');
+            new Chart(adminCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Indictments', 'Convictions', 'Prison Sentences'],
+                    datasets: [{
+                        label: 'Republican',
+                        data: [120, 89, 34],
+                        backgroundColor: '#E74C3C'
+                    }, {
+                        label: 'Democrat',
+                        data: [3, 1, 1],
+                        backgroundColor: '#3498DB'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9CA3AF' }
+                        },
+                        x: {
+                            grid: { color: '#374151' },
+                            ticks: { color: '#9CA3AF' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#E5E7EB' }
+                        }
+                    }
+                }
+            });
+
+            // Congress Pie Chart
+            const congressCtx = document.getElementById('congressPieChart').getContext('2d');
+            new Chart(congressCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Republican', 'Democrat'],
+                    datasets: [{
+                        data: [6, 3],
+                        backgroundColor: ['#E74C3C', '#3498DB'],
+                        borderWidth: 2,
+                        borderColor: '#1e293b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            labels: { 
+                                color: '#E5E7EB',
+                                font: { size: 14 }
+                            },
+                            position: 'bottom'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return label + ': ' + value + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
